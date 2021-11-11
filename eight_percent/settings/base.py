@@ -14,9 +14,9 @@ from pathlib import Path
 
 from django.core.exceptions import ImproperlyConfigured
 
-
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
+
 
 def get_env_variable_or(var_name, default_value=None):
     try:
@@ -24,7 +24,6 @@ def get_env_variable_or(var_name, default_value=None):
     except KeyError:
         error_msg = f'Set the {var_name} environment variable'
         raise ImproperlyConfigured(error_msg)
-
 
 
 # Quick-start development settings - unsuitable for production
@@ -37,6 +36,17 @@ def get_env_variable_or(var_name, default_value=None):
 
 
 # Application definition
+PROJECT_APPS = [
+    'account',
+]
+THIRD_PARTY_APPS = [
+    'corsheaders',
+    'drf_yasg',
+    'rest_framework',
+    'django_extensions',
+    'rest_framework.authtoken',
+    'debug_toolbar',
+]
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -45,17 +55,14 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'corsheaders',
-    'drf_yasg',
-    'rest_framework',
-    'django_extensions',
+
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
-    #'django.middleware.csrf.CsrfViewMiddleware',
+    # 'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -81,7 +88,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'eight_percent.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
@@ -91,7 +97,6 @@ DATABASES = {
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
@@ -111,7 +116,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/3.2/topics/i18n/
 
@@ -125,26 +129,24 @@ USE_L10N = True
 
 USE_TZ = False
 
-
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
 STATIC_URL = '/static/'
 
-STATIC_ROOT= os.path.join(BASE_DIR,'static')
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-
-#REMOVE_APPEND_SLASH_WARNING
+# REMOVE_APPEND_SLASH_WARNING
 APPEND_SLASH = False
 
 ##CORS
-CORS_ORIGIN_ALLOW_ALL=True
-CORS_ALLOW_CREDENTIALS=True
+CORS_ORIGIN_ALLOW_ALL = True
+CORS_ALLOW_CREDENTIALS = True
 
 CORS_ALLOW_METHODS = (
     'DELETE',
