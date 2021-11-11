@@ -37,8 +37,9 @@ def get_env_variable_or(var_name, default_value=None):
 
 # Application definition
 PROJECT_APPS = [
-    'account',
+    'accounts',
 ]
+
 THIRD_PARTY_APPS = [
     'corsheaders',
     'drf_yasg',
@@ -46,6 +47,7 @@ THIRD_PARTY_APPS = [
     'django_extensions',
     'rest_framework.authtoken',
     'debug_toolbar',
+
 ]
 
 INSTALLED_APPS = [
@@ -55,6 +57,11 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
+] + PROJECT_APPS + THIRD_PARTY_APPS
+
+THIRD_PARTY_MIDDLEWARE = [
+    'debug_toolbar.middleware.DebugToolbarMiddleware'
 
 ]
 
@@ -66,7 +73,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-]
+
+] + THIRD_PARTY_MIDDLEWARE
 
 ROOT_URLCONF = 'eight_percent.urls'
 
