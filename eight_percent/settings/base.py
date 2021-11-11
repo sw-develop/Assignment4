@@ -38,6 +38,7 @@ def get_env_variable_or(var_name, default_value=None):
 # Application definition
 PROJECT_APPS = [
     'accounts',
+    'users',
 ]
 
 THIRD_PARTY_APPS = [
@@ -48,6 +49,7 @@ THIRD_PARTY_APPS = [
     'rest_framework.authtoken',
     'debug_toolbar',
     'django_seed',
+    'rest_auth',
 
 ]
 
@@ -124,6 +126,14 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
+
+AUTH_USER_MODEL = 'users.User'
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication',
+    ]
+}
 
 # Internationalization
 # https://docs.djangoproject.com/en/3.2/topics/i18n/
