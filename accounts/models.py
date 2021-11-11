@@ -7,10 +7,12 @@ class Account(models.Model):
     class Meta: 
         db_table = 'accounts'
 
-    user    = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    name    = models.CharField(max_length=20)
-    number  = models.TextField(max_length=20)
-    balance = models.PositiveBigIntegerField(default=0)
+    user       = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    name       = models.CharField(max_length=20)
+    number     = models.TextField(max_length=20)
+    balance    = models.PositiveBigIntegerField(default=0)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
 
 class TradeLog(models.Model): 
