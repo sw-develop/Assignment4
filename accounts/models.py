@@ -10,7 +10,7 @@ class Account(models.Model):
     user    = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     name    = models.CharField(max_length=20)
     number  = models.TextField(max_length=20)
-    balance = models.DateTimeField(auto_now_add=True)
+    balance = models.PositiveBigIntegerField(default=0)
 
 
 class TradeLog(models.Model): 
@@ -23,8 +23,8 @@ class TradeLog(models.Model):
         db_table = 'trade_logs'
 
     account     = models.ForeignKey(Account, on_delete=models.CASCADE)
-    amount      = models.CharField(max_length=20)
-    balance     = models.TextField(max_length=20)
+    amount      = models.PositiveBigIntegerField()
+    balance     = models.PositiveBigIntegerField()
     description = models.CharField(max_length=100)
     created_at  = models.DateTimeField(auto_now_add=True)
     code        = models.PositiveSmallIntegerField(choices=TrageCodeChoice.choices)
