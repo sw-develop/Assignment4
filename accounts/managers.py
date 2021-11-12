@@ -25,7 +25,7 @@ class AccountManager:
     def _deposit_or_withdrawal(self, account, data, code):
         amount = data.get('amount')
         description = data.get('description')
-        print(description)
+
         if amount is None or description is None:
             raise BadRequestException('amount or description')
         try:
