@@ -45,7 +45,7 @@ class AccountViewSet(viewsets.GenericViewSet):
             with transaction.atomic():
                 trade_log = TradeLog(
                     amount=amount, balance=account.balance + amount, description=description,
-                    account=account, code=TradeLog.TrageCodeChoice.DEPOSIT
+                    account=account, code=code
                 )
                 account.balance = account.balance + amount
                 trade_log.save()
