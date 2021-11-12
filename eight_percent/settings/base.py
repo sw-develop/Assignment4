@@ -18,7 +18,7 @@ from django.core.exceptions import ImproperlyConfigured
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
 
-def get_env_variable_or(var_name, default_value=None):
+def get_env_variable(var_name):
     try:
         return os.environ[var_name]
     except KeyError:

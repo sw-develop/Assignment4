@@ -1,0 +1,34 @@
+version: "3"
+services: 
+  eight-percent-backend: 
+    container_name: eight-percent-backend
+    build: 
+      context: .
+      dockerfile: ./Dockerfile-deploy
+    restart: always 
+    environment: 
+      DJANGO_SETTINGS_MODULE: eight_percent.settings.deploy
+    env_file: 
+      - .dockerenv.deploy.backend
+    command: 
+      - bash 
+      - -c 
+      - | 
+        python manage.py migrate
+        echo yes | python manage.py collectstatic
+        gunicorn eight_percent.wsgi:application --bind 0.0.0.0:8000
+    volumes: 
+      - .:/usr/src/app/ 
+
+  eight-percent-nginx: 
+    image: nginx 
+    container_name: eight-percent_nginx
+    volumes:
+      - ./config/nginx:/etc/nginx/conf.d
+      - ./static:/static
+    ports:
+      - "8031:8031" 
+    environment:
+      - TZ="Asia/Seoul"
+    depends_on:
+      - eight-percent-backend
