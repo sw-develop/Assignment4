@@ -1,15 +1,18 @@
-from rest_framework import viewsets, status
-from rest_framework.decorators import action
-from rest_framework.permissions import AllowAny, IsAuthenticated
-from rest_framework.response import Response
+from rest_framework             import viewsets, status
+from rest_framework.decorators  import action
+from rest_framework.permissions import AllowAny
+from rest_framework.response    import Response
+from rest_framework.pagination  import CursorPagination
+from django_filters             import utils
 
 from accounts.managers import AccountManager
-from accounts.models import Account, TradeLog
+from accounts.models   import Account, TradeLog
+from .serializers      import TradeLogSerializer
+from .filters          import TradeLogListFilter
 
 
 class AccountViewSet(viewsets.GenericViewSet):
     queryset = Account.objects.all()
-    # serializer_class =
     # todo: User 구현 되고 IsAuthenticated 로 변경
     permission_classes = [AllowAny]
 
@@ -30,13 +33,36 @@ class AccountViewSet(viewsets.GenericViewSet):
         account = manager.get_account(request.user, pk)
         pass
 
-    def list(self, request):
+    @action(methods=['GET'], detail=True)
+    def tradelogs(self, request, pk):
         """
-        todo: 필요 없으면 삭제, 유저 정보 조회에서 처리할 수도?
         계좌 리스트 조회
-        GET /accounts/
+        GET /accounts/{account_id}/tradelogs/
         """
-        pass
+        tradelogs = TradeLog.objects.filter(account_id=pk)
+        
+        filter_set = {
+            'data'    : request.query_params,
+            'queryset': tradelogs,
+            'request' : request,
+        }
+
+        filterset = TradeLogListFilter(**filter_set)
+
+        if not filterset.is_valid() and self.raise_exception:
+            raise utils.translate_validation(filterset.errors)
+            
+        cursorPaginator = CursorPagination()
+        cursorPaginator.page_size = 20
+
+        ordering_filter           = {'desc' :'-created_at', 'asc' : 'created_at'}
+        cursorPaginator.ordering = ordering_filter.get(filter_set['data'].get('order'), '-created_at')
+        
+        paginated_tradelogs = cursorPaginator.paginate_queryset(filterset.qs, request)
+        result              = TradeLogSerializer(paginated_tradelogs, many=True)
+
+        return cursorPaginator.get_paginated_response(result.data)
+
 
     @action(methods=['POST'], detail=True)
     def deposit(self, request, pk):
