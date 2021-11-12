@@ -24,6 +24,18 @@ class AccountSerializer(serializers.ModelSerializer):
 
 
 class TradeLogSerializer(serializers.ModelSerializer):
+    code = serializers.SerializerMethodField()
+
     class Meta:
         model = TradeLog
-        exclude = ('account',)
+        exclude = (
+            'id',
+            'account',
+        )
+
+    def get_code(self, trade_log):
+        if trade_log.code == TradeLog.TrageCodeChoice.DEPOSIT:
+            rtn = "입금완료"
+        if trade_log.code == TradeLog.TrageCodeChoice.WITHDRAW:
+            rtn = "출금완료"
+        return rtn

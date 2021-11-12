@@ -1,22 +1,21 @@
 from rest_framework             import viewsets, status
 from rest_framework.decorators  import action
-from rest_framework.permissions import IsAuthenticated
 from rest_framework.response    import Response
 from rest_framework.pagination  import CursorPagination
 from django_filters             import utils
 
 from accounts.managers import AccountManager
 from accounts.models   import Account, TradeLog
+from .permissions import IsOwner
 from .serializers      import TradeLogSerializer
 from .filters          import TradeLogListFilter
-from accounts.models import Account, TradeLog
 from accounts.serializers import AccountSerializer
 
 
 class AccountViewSet(viewsets.GenericViewSet):
     queryset = Account.objects.all()
     serializer_class = AccountSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsOwner]
 
     def create(self, request):
         """
@@ -53,8 +52,7 @@ class AccountViewSet(viewsets.GenericViewSet):
         manager = AccountManager()
         account = manager.get_account(request.user, pk)
         account, trade_log = manager.deposit(account, request.data)
-        # todo: 성공 리스폰스 처리
-        return Response(status=status.HTTP_200_OK)
+        return Response(TradeLogSerializer(trade_log).data, status=status.HTTP_200_OK)
 
     @action(methods=['POST'], detail=True)
     def withdrawal(self, request, pk):
@@ -65,8 +63,7 @@ class AccountViewSet(viewsets.GenericViewSet):
         manager = AccountManager()
         account = manager.get_account(request.user, pk)
         account, trade_log = manager.withdrawal(account, request.data)
-        # todo: 성공 리스폰스 처리
-        return Response(status=status.HTTP_200_OK)
+        return Response(TradeLogSerializer(trade_log).data, status=status.HTTP_200_OK)
 
     @action(methods=['GET'], detail=True)
     def tradelogs(self, request, pk):

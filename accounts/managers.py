@@ -25,33 +25,32 @@ class AccountManager:
     def _deposit_or_withdrawal(self, account, data, code):
         amount = data.get('amount')
         description = data.get('description')
+        print(description)
         if amount is None or description is None:
             raise BadRequestException('amount or description')
         try:
             amount = int(amount)
         except ValueError:
             raise BadRequestException('amount')
-
+        if amount < 0:
+            amount = amount * -1
         if code == TradeLog.TrageCodeChoice.DEPOSIT:
-            if amount < 0:
-                amount = amount * -1
+            balance = account.balance + amount
         if code == TradeLog.TrageCodeChoice.WITHDRAW:
-            if amount > 0:
-                if account.balance < amount:
-                    # todo: 에러처리
-                    raise APIException(detail="잔액부족")
-                amount = amount * -1
+            if account.balance < amount:
+                raise APIException(detail="잔액부족")
+            balance = account.balance - amount
 
         try:
             with transaction.atomic():
                 trade_log = TradeLog(
-                    amount=amount, balance=account.balance + amount, description=description,
+                    amount=amount, balance=balance, description=description,
                     account=account, code=code
                 )
-                account.balance = account.balance + amount
+                account.balance = balance
                 trade_log.save()
                 account.save()
         except IntegrityError:
-            # todo: 적정에러처리
-            pass
+            raise APIException(detail="오류가 발생했습니다. 입출금이 이뤄지지 않았습니다.")
+
         return account, trade_log
