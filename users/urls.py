@@ -3,9 +3,12 @@ from django.conf.urls   import url
 
 from .views             import RegisterUserView, UserDetailAPIView
 
+from rest_auth.views   import LoginView, LogoutView
+
 
 urlpatterns = [
-    url('/', include('rest_auth.urls')),
+    path('/login/', LoginView.as_view(), name="user-login"),
+    path('/logout/', LogoutView.as_view(), name='user-logout'),
     path('/signup/', RegisterUserView.as_view(), name='registration'),
     path('/<int:pk>/', UserDetailAPIView.as_view(), name='user_info'),
 ]

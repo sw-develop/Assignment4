@@ -24,9 +24,9 @@ class TradeLog(models.Model):
     class Meta: 
         db_table = 'trade_logs'
 
-    account     = models.ForeignKey(Account, on_delete=models.CASCADE)
+    account     = models.ForeignKey(Account, on_delete=models.CASCADE, db_index=True)
     amount      = models.PositiveBigIntegerField()
     balance     = models.PositiveBigIntegerField()
     description = models.CharField(max_length=100)
-    created_at  = models.DateTimeField(auto_now_add=True)
+    created_at  = models.DateTimeField(auto_now_add=True, db_index=True)
     code        = models.PositiveSmallIntegerField(choices=TrageCodeChoice.choices)
