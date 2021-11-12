@@ -1,9 +1,8 @@
-from django.urls        import path, include
-from django.conf.urls   import url
+from django.urls        import path
+from rest_auth.views    import LoginView, LogoutView
 
 from .views             import RegisterUserView, UserDetailAPIView
 
-from rest_auth.views   import LoginView, LogoutView
 
 
 urlpatterns = [

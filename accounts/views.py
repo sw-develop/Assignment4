@@ -6,14 +6,14 @@ from rest_framework.response    import Response
 from rest_framework.pagination  import CursorPagination
 from django_filters             import utils
 
-from accounts.managers import AccountManager
-from accounts.models   import Account, TradeLog
-from .permissions import IsOwner
-from .serializers import TradeLogSerializer, TradeLogBodySerializer, TradeLogQueryParamSerializer
-from .filters          import TradeLogListFilter
-from accounts.serializers import AccountSerializer
+from accounts.managers          import AccountManager
+from accounts.models            import Account, TradeLog
+from .permissions               import IsOwner
+from .filters                   import TradeLogListFilter
+from global_variable            import DEFAULT_TOKEN
+from .serializers               import (TradeLogSerializer, TradeLogBodySerializer, 
+                                        TradeLogQueryParamSerializer, AccountSerializer)
 
-from global_variable import DEFAULT_TOKEN
 
 class AccountViewSet(viewsets.GenericViewSet):
     queryset = Account.objects.all()
@@ -26,6 +26,7 @@ class AccountViewSet(viewsets.GenericViewSet):
                                         type        = openapi.TYPE_STRING,
                                         default     = DEFAULT_TOKEN
     )
+    
     @swagger_auto_schema(
         manual_parameters = [parameter_token],
         responses         = {
@@ -47,9 +48,9 @@ class AccountViewSet(viewsets.GenericViewSet):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         account = Account.objects.create(
-            name=request.data.get('name'),
-            number=request.data.get('number'),
-            user=request.user
+            name   = request.data.get('name'),
+            number = request.data.get('number'),
+            user   = request.user
         )
         return Response(self.get_serializer(account).data, status=status.HTTP_201_CREATED)
 
@@ -139,9 +140,9 @@ class AccountViewSet(viewsets.GenericViewSet):
         tradelogs = TradeLog.objects.filter(account_id=account.id)
 
         filter_set = {
-            'data': request.query_params,
+            'data'    : request.query_params,
             'queryset': tradelogs,
-            'request': request,
+            'request' : request,
         }
 
         filterset = TradeLogListFilter(**filter_set)

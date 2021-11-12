@@ -1,6 +1,6 @@
 from django.db                  import models
 from django.contrib.auth.models import BaseUserManager, AbstractBaseUser
-from django.contrib.auth.models import User
+
 
 class UserManager(BaseUserManager):
     def create_user(self, email, name, password=None):
@@ -18,16 +18,16 @@ class UserManager(BaseUserManager):
 
 
 class User(AbstractBaseUser):
-    email     = models.EmailField(max_length=255, unique=True)
-    name      = models.CharField(max_length=20)
-    is_admin  = models.BooleanField(default=False)
-    username  = models.CharField(max_length=10, default='', null=True, blank=True)
-    first_name  = models.CharField(max_length=10, default='', null=True, blank=True)
+    email      = models.EmailField(max_length=255, unique=True)
+    name       = models.CharField(max_length=20)
+    is_admin   = models.BooleanField(default=False)
+    username   = models.CharField(max_length=10, default='', null=True, blank=True)
+    first_name = models.CharField(max_length=10, default='', null=True, blank=True)
     last_name  = models.CharField(max_length=10, default='', null=True, blank=True)
 
     objects = UserManager()
 
-    USERNAME_FIELD = 'email'
+    USERNAME_FIELD  = 'email'
     REQUIRED_FIELDS = ['name']
 
     def __str__(self):

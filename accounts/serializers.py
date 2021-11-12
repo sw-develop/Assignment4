@@ -1,7 +1,7 @@
 from rest_framework import serializers
 
-from accounts.exceptions import BadRequestException
-from accounts.models import Account, TradeLog
+from .exceptions    import BadRequestException
+from .models        import Account, TradeLog
 
 
 class AccountSerializer(serializers.ModelSerializer):
@@ -14,8 +14,9 @@ class AccountSerializer(serializers.ModelSerializer):
         )
 
     def validate(self, data):
-        name = data.get('name')
+        name   = data.get('name')
         number = data.get('number')
+
         if name is None or number is None:
             raise BadRequestException('name or number')
         if Account.objects.filter(number=number).exists():
@@ -42,12 +43,12 @@ class TradeLogSerializer(serializers.ModelSerializer):
 
 
 class TradeLogBodySerializer(serializers.Serializer):
-    amount = serializers.IntegerField()
+    amount      = serializers.IntegerField()
     description = serializers.CharField(max_length=100)
 
 
 class TradeLogQueryParamSerializer(serializers.Serializer):
-    code = serializers.IntegerField(help_text="전체:미입력, 입금:1, 출금:2", required=False)
+    code  = serializers.IntegerField(help_text="전체:미입력, 입금:1, 출금:2", required=False)
     order = serializers.IntegerField(help_text="asc or desc:default(-created_at)", required=False)
     start = serializers.IntegerField(help_text="ex) 2000-01-01", required=False)
-    end = serializers.IntegerField(help_text="ex) 2000-01-01", required=False)
+    end   = serializers.IntegerField(help_text="ex) 2000-01-01", required=False)
