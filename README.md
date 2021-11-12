@@ -42,16 +42,13 @@
 - DB를 설계 할때 각 칼럼의 타입과 제약
 
 **✔️ 구현하지 않아도 되는 부분은 다음과 같습니다.**
----
 - 문제와 관련되지 않은 부가적인 정보. 예를 들어 사용자 테이블의 이메일, 주소, 성별 등
 - 프론트앤드 관련 부분
 
 **✔️  제약사항은 다음과 같습니다.**
----
 - (**8퍼센트가 직접 로컬에서 실행하여 테스트를 원하는 경우를 위해**) 테스트의 편의성을 위해 mysql, postgresql 대신 sqllite를 사용해 주세요.
 
 **✔️  상세설명**
----
 **1)** 거래내역 조회 **API**
 
 - 아래와 같은 조회 화면에서 사용되는 API를 고려하시면 됩니다.
@@ -92,12 +89,10 @@
 > - ETC :  <img src="https://img.shields.io/badge/Git-F05032?style=for-the-badge&logo=Git&logoColor=white"/>&nbsp;<img src="https://img.shields.io/badge/Github-181717?style=for-the-badge&logo=Github&logoColor=white"/>&nbsp;<img src="https://img.shields.io/badge/SWAGGER-5B8C04?style=for-the-badge&logo=Swagger&logoColor=white"/>&nbsp;
 
 ## 모델링
----
 ![image](https://user-images.githubusercontent.com/8219812/141481348-01525848-e996-4477-9b1f-e1a63ed016a2.png)
 
 
 ## API
----
 [링크-Swagger](http://18.188.189.173:8031/swagger/)
 
 ## 구현 기능
@@ -142,13 +137,8 @@ connection_created.connect(activate_db_optimize)
 
 
 ## API TEST 방법
-1. 우측 링크를 클릭해서 postman으로 들어갑니다. [링크](https://www.postman.com/wecode-21-1st-kaka0/workspace/assignment4)
+1. 우측 링크를 클릭해서 swagger로 들어갑니다. [링크](http://18.188.189.173:8031/swagger/)
 
-2. 정의된 SERVER_URL이 올바른지 확인 합니다. (18.188.189.173:8031)
-
-
-3. 만약 Send버튼이 비활성화가 될 시 fork를 이용해서 해당 postman project를 복사해서 시도하길 바랍니다.
-![image](https://user-images.githubusercontent.com/8219812/139912241-d6cb5831-23e8-4cbb-a747-f52c42601098.png)
 
 
 ## 설치 및 실행 방법
