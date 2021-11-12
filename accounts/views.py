@@ -1,10 +1,9 @@
-from django.db import transaction, IntegrityError
 from rest_framework import viewsets, status
 from rest_framework.decorators import action
-from rest_framework.exceptions import PermissionDenied, NotFound, server_error, APIException
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 
+from accounts.managers import AccountManager
 from accounts.models import Account, TradeLog
 
 
@@ -14,46 +13,6 @@ class AccountViewSet(viewsets.GenericViewSet):
     # todo: User 구현 되고 IsAuthenticated 로 변경
     permission_classes = [AllowAny]
 
-    def get_account(self, request_user, account_id):
-        try:
-            account = Account.objects.get(id=account_id)
-        except Account.DoesNotExist:
-            raise NotFound(detail="error: Account Does Not Exist")
-        if account.user != request_user:
-            raise PermissionDenied()
-        return account
-
-    def deposit_or_withdrawal(self, account, data, code):
-        # todo:에러 처리
-        if code not in TradeLog.TrageCodeChoice.choices:
-            raise APIException(detail="fdfdf")
-        # todo: amount int value validation
-        amount = data.get('amount')
-        description = data.get('description')
-
-        if code == TradeLog.TrageCodeChoice.DEPOSIT:
-            if amount < 0:
-                amount = amount * -1
-        if code == TradeLog.TrageCodeChoice.WITHDRAW:
-            if amount > 0:
-                if account.balance < amount:
-                    # todo: 에러처리
-                    raise APIException(detail="잔액부족")
-                amount = amount * -1
-
-        try:
-            with transaction.atomic():
-                trade_log = TradeLog(
-                    amount=amount, balance=account.balance + amount, description=description,
-                    account=account, code=code
-                )
-                account.balance = account.balance + amount
-                trade_log.save()
-                account.save()
-        except IntegrityError:
-            # todo: 적정에러처리
-            pass
-        return account, trade_log
 
     def create(self, request):
         """
@@ -67,7 +26,8 @@ class AccountViewSet(viewsets.GenericViewSet):
         계좌 단건 조회
         GET /accounts/{account_id}/
         """
-        account = self.get_account(request.user, pk)
+        manager = AccountManager()
+        account = manager.get_account(request.user, pk)
         pass
 
     def list(self, request):
@@ -84,8 +44,9 @@ class AccountViewSet(viewsets.GenericViewSet):
         입금
         POST /accounts/{account_id}/deposit/
         """
-        account = self.get_account(request.user, pk)
-        account, trade_log = self.deposit_or_withdrawal(account, request.data, TradeLog.TrageCodeChoice.DEPOSIT)
+        manager = AccountManager()
+        account = manager.get_account(request.user, pk)
+        account, trade_log = manager.deposit(account, request.data)
         # todo: 성공 리스폰스 처리
         return Response(status=status.HTTP_200_OK)
 
@@ -95,7 +56,8 @@ class AccountViewSet(viewsets.GenericViewSet):
         출금
         POST /accounts/{account_id}/withdrawal/
         """
-        account = self.get_account(request.user, pk)
-        account, trade_log = self.deposit_or_withdrawal(account, request.data, TradeLog.TrageCodeChoice.WITHDRAW)
+        manager = AccountManager()
+        account = manager.get_account(request.user, pk)
+        account, trade_log = manager.withdrawal(account, request.data)
         # todo: 성공 리스폰스 처리
         return Response(status=status.HTTP_200_OK)
