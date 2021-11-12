@@ -1,4 +1,5 @@
-from drf_yasg.utils import swagger_auto_schema
+from drf_yasg                   import openapi
+from drf_yasg.utils             import swagger_auto_schema
 from rest_framework             import viewsets, status
 from rest_framework.decorators  import action
 from rest_framework.response    import Response
@@ -12,14 +13,27 @@ from .serializers import TradeLogSerializer, TradeLogBodySerializer, TradeLogQue
 from .filters          import TradeLogListFilter
 from accounts.serializers import AccountSerializer
 
+from global_variable import DEFAULT_TOKEN
 
 class AccountViewSet(viewsets.GenericViewSet):
     queryset = Account.objects.all()
     serializer_class = AccountSerializer
     permission_classes = [IsOwner]
-
+    parameter_token = openapi.Parameter (
+                                        "Authorization", 
+                                        openapi.IN_HEADER, 
+                                        description = "access_token", 
+                                        type        = openapi.TYPE_STRING,
+                                        default     = DEFAULT_TOKEN
+    )
     @swagger_auto_schema(
+        manual_parameters = [parameter_token],
+        responses         = {
+            "200": AccountSerializer,
+            "401": "UNAUTHORIZED"
+        },
         operation_id="계좌등록",
+        operation_description = "header에 토큰이 필요합니다."
     )
     def create(self, request):
         """
@@ -40,7 +54,14 @@ class AccountViewSet(viewsets.GenericViewSet):
         return Response(self.get_serializer(account).data, status=status.HTTP_201_CREATED)
 
     @swagger_auto_schema(
-        operation_id="계좌목록 조회",
+        manual_parameters = [parameter_token],
+        responses         = {
+            "200": AccountSerializer,
+            "401": "UNAUTHORIZED",
+            "404": "NOT FOUND"
+        },
+        operation_id="계좌 목록 조회",
+        operation_description = "header에 토큰이 필요합니다."
     )
     def list(self, request):
         """
@@ -51,6 +72,7 @@ class AccountViewSet(viewsets.GenericViewSet):
         return Response(self.get_serializer(accounts, many=True).data, status=status.HTTP_200_OK)
 
     @swagger_auto_schema(
+        manual_parameters = [parameter_token],
         request_body=TradeLogBodySerializer,
         responses={
             "200": TradeLogSerializer,
@@ -73,6 +95,7 @@ class AccountViewSet(viewsets.GenericViewSet):
         return Response(TradeLogSerializer(trade_log).data, status=status.HTTP_200_OK)
 
     @swagger_auto_schema(
+        manual_parameters = [parameter_token],
         request_body=TradeLogBodySerializer,
         responses={
             "200": TradeLogSerializer,
@@ -95,6 +118,7 @@ class AccountViewSet(viewsets.GenericViewSet):
         return Response(TradeLogSerializer(trade_log).data, status=status.HTTP_200_OK)
 
     @swagger_auto_schema(
+        manual_parameters = [parameter_token],
         query_serializer=TradeLogQueryParamSerializer,
         responses={
             "200": TradeLogSerializer,
