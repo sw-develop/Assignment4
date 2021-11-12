@@ -9,11 +9,11 @@
 ## Members
 |이름   |github                   |담당 기능|
 |-------|-------------------------|--------------------|
-|김태우 |[jotasic](https://github.com/jotasic)     | |
-|고유영 |[lunayyko](https://github.com/lunayyko)   | |
-|박지원 |[jiwon5304](https://github.com/jiwon5304) | |
-|최신혁 |[shchoi94](https://github.com/shchoi94) | |
-|박세원 |[sw-develop](https://github.com/sw-develop) ||
+|김태우 |[jotasic](https://github.com/jotasic)     | 모델링, 초기세팅, 거래내역 조회 API, 배포|
+|고유영 |[lunayyko](https://github.com/lunayyko)   | 회원가입, 로그인, 로그아웃 |
+|박지원 |[jiwon5304](https://github.com/jiwon5304) | 회원가입, 로그인, 로그아웃 |
+|최신혁 |[shchoi94](https://github.com/shchoi94) | 입금 출금 API, 깃 마스터 |
+|박세원 |[sw-develop](https://github.com/sw-develop) | 거래내역 조회 API |
 
 ## 과제 내용
 
@@ -45,6 +45,7 @@
 ---
 - 문제와 관련되지 않은 부가적인 정보. 예를 들어 사용자 테이블의 이메일, 주소, 성별 등
 - 프론트앤드 관련 부분
+
 
 **✔️  제약사항은 다음과 같습니다.**
 ---
@@ -93,14 +94,26 @@
 
 ## 모델링
 ---
+![image](https://user-images.githubusercontent.com/8315252/141438817-6d4733cb-b65c-4203-a407-cca8df7d8230.png)
 
 ## API
 ---
-
+### REST API(Swagger)
+[링크-Swagger](http://18.188.189.173:8011/swagger/)
+배포 후 서버 주소 수정 필요
 ## 구현 기능
 ---
-
-
+1. 회원가입, 로그인, 로그아웃
+- 커스텀 유저모델 생성, username 대신 email을 사용
+- rest_auth 사용, 로그인 시 토큰 생성
+2. 입급, 출금 API
+- 계좌의 소유주만 계좌에서 입금, 출금 
+- 잔액을 넘어서 출금 요청을 하면 에러 메세지 반환
+3. 거래 내역 조회 API
+- 계좌의 소유주만 거래 내역 조회 가능
+- 입금, 출금만 선택해서 필터링
+- 거래일시별로 조회기간을 정해서 필터링 
+- Pagination
 
 ## 배포정보
 ---
