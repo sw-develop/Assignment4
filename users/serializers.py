@@ -13,3 +13,9 @@ class RegisterUserSerializer(ModelSerializer):
 
     def create(self, validated_data):
         return self.Meta.model.objects.create_user(**validated_data)
+
+class UserSerializer(ModelSerializer):
+
+    class Meta:
+        model = get_user_model()
+        exclude = ['password', 'is_admin']
