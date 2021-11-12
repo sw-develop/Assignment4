@@ -35,7 +35,19 @@ class TradeLogSerializer(serializers.ModelSerializer):
 
     def get_code(self, trade_log):
         if trade_log.code == TradeLog.TrageCodeChoice.DEPOSIT:
-            rtn = "입금완료"
+            rtn = "입금"
         if trade_log.code == TradeLog.TrageCodeChoice.WITHDRAW:
-            rtn = "출금완료"
+            rtn = "출금"
         return rtn
+
+
+class TradeLogBodySerializer(serializers.Serializer):
+    amount = serializers.IntegerField()
+    description = serializers.CharField(max_length=100)
+
+
+class TradeLogQueryParamSerializer(serializers.Serializer):
+    code = serializers.IntegerField(help_text="전체:미입력, 입금:1, 출금:2", required=False)
+    order = serializers.IntegerField(help_text="asc or desc:default(-created_at)", required=False)
+    start = serializers.IntegerField(help_text="ex) 2000-01-01", required=False)
+    end = serializers.IntegerField(help_text="ex) 2000-01-01", required=False)
