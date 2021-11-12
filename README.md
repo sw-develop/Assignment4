@@ -91,6 +91,8 @@
 ## 모델링
 ![image](https://user-images.githubusercontent.com/8219812/141481348-01525848-e996-4477-9b1f-e1a63ed016a2.png)
 
+- 계좌잔액, 거래내역의 금액 관련 필드들 일반 IntegerField 대신, PositiveBigIntegerField를 사용하였습니다.
+- IntegerField는 약 21억까지 저장되기 때문에, 계좌 잔액을 나타내기가 부족하다고 판단했습니다. BigIntegerField로 할 시, 약 900경까지 표현할 수 있습니다.
 
 ## API
 [링크-Swagger](http://18.188.189.173:8031/swagger/)
