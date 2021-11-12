@@ -47,6 +47,7 @@ THIRD_PARTY_APPS = [
     'django_extensions',
     'rest_framework.authtoken',
     'debug_toolbar',
+    'django_seed',
 
 ]
 
