@@ -1,6 +1,7 @@
 from django.db import transaction, IntegrityError
 from rest_framework.exceptions import NotFound, PermissionDenied, APIException
 
+from accounts.exceptions import BadRequestException
 from accounts.models import Account, TradeLog
 
 
@@ -22,12 +23,14 @@ class AccountManager:
         return self._deposit_or_withdrawal(account, data, TradeLog.TrageCodeChoice.WITHDRAW)
 
     def _deposit_or_withdrawal(self, account, data, code):
-        # todo:에러 처리
-        if code not in TradeLog.TrageCodeChoice.choices:
-            raise APIException(detail="fdfdf")
-        # todo: data params validation
         amount = data.get('amount')
         description = data.get('description')
+        if amount is None or description is None:
+            raise BadRequestException('amount or description')
+        try:
+            amount = int(amount)
+        except ValueError:
+            raise BadRequestException('amount')
 
         if code == TradeLog.TrageCodeChoice.DEPOSIT:
             if amount < 0:
