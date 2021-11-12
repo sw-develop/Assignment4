@@ -458,3 +458,9 @@ zsdoc/data
 
 
 *.csv
+
+static
+
+.dockerenv*
+
+db.sqlite
