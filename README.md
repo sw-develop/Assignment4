@@ -312,6 +312,9 @@ sqlite 캐시 사이즈를 늘려봤습니다.
  ┃ ┣ 📜serializers.py
  ┃ ┣ 📜urls.py
  ┃ ┗ 📜views.py
+ ┣ 📂config
+ ┃ ┗ 📂nginx
+ ┃ ┃ ┗ 📜nginx.conf
  ┣ 📂eight_percent
  ┃ ┣ 📂settings
  ┃ ┃ ┣ 📜__init__.py
@@ -338,7 +341,8 @@ sqlite 캐시 사이즈를 늘려봤습니다.
  ┣ 📜README.md
  ┣ 📜manage.py
  ┣ 📜pull_request_template.md
- ┗ 📜requirements.txt
+ ┣ 📜requirements.txt
+ ┗ 📜test_functional_test.py
 ```
 
 ## TIL정리 (Blog)
