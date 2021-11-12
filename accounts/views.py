@@ -18,6 +18,9 @@ class AccountViewSet(viewsets.GenericViewSet):
     serializer_class = AccountSerializer
     permission_classes = [IsOwner]
 
+    @swagger_auto_schema(
+        operation_id="계좌등록",
+    )
     def create(self, request):
         """
         계좌생성
@@ -36,6 +39,9 @@ class AccountViewSet(viewsets.GenericViewSet):
         )
         return Response(self.get_serializer(account).data, status=status.HTTP_201_CREATED)
 
+    @swagger_auto_schema(
+        operation_id="계좌목록 조회",
+    )
     def list(self, request):
         """
         계좌 리스트 조회
