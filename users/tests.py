@@ -1,4 +1,3 @@
-import datetime
 from unittest            import mock
 
 from django.contrib.auth import get_user_model
@@ -6,6 +5,7 @@ from rest_framework      import status
 from rest_framework.test import APITestCase
 
 from .models             import User
+
 
 class RegisterUsertView(APITestCase):
     def setUp(self):
@@ -59,7 +59,7 @@ class LoginView(APITestCase):
         get_user_model().objects.create_user(
             email    = 'jiwon222@wanted.com',
             password = '12345678',
-            name = '유저생성'
+            name     = '유저생성'
         ) 
 
     def tearDown(self):
