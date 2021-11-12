@@ -9,11 +9,11 @@
 ## Members
 |이름   |github                   |담당 기능|
 |-------|-------------------------|--------------------|
-|김태우 |[jotasic](https://github.com/jotasic)     | |
-|고유영 |[lunayyko](https://github.com/lunayyko)   | |
-|박지원 |[jiwon5304](https://github.com/jiwon5304) | |
-|최신혁 |[shchoi94](https://github.com/shchoi94) | |
-|박세원 |[sw-develop](https://github.com/sw-develop) ||
+|김태우 |[jotasic](https://github.com/jotasic)       | API(거래내역)                           |
+|고유영 |[lunayyko](https://github.com/lunayyko)     | API(회원가입, 로그인, 로그아웃), 배포환경설정  |
+|박지원 |[jiwon5304](https://github.com/jiwon5304)   | API(회원가입, 로그인, 로그아웃)             |
+|최신혁 |[shchoi94](https://github.com/shchoi94)     | API(계좌생성, 계좌목록조회, 입금, 출금), swagger 세팅|
+|박세원 |[sw-develop](https://github.com/sw-develop) | API(거래내역), Functional Test         |
 
 ## 과제 내용
 
@@ -89,18 +89,49 @@
 ## 사용 기술 및 tools
 > - Back-End :  <img src="https://img.shields.io/badge/Python 3.8-3776AB?style=for-the-badge&logo=Python&logoColor=white"/>&nbsp;<img src="https://img.shields.io/badge/Django 3.2-092E20?style=for-the-badge&logo=Django&logoColor=white"/>&nbsp;<img src="https://img.shields.io/badge/sqlite-0064a5?style=for-the-badge&logo=sqlite&logoColor=white"/>&nbsp;
 > - Deploy : <img src="https://img.shields.io/badge/AWS_EC2-232F3E?style=for-the-badge&logo=Amazon&logoColor=white"/>&nbsp;<img src="https://img.shields.io/badge/Docker-0052CC?style=for-the-badge&logo=Docker&logoColor=white"/>
-> - ETC :  <img src="https://img.shields.io/badge/Git-F05032?style=for-the-badge&logo=Git&logoColor=white"/>&nbsp;<img src="https://img.shields.io/badge/Github-181717?style=for-the-badge&logo=Github&logoColor=white"/>&nbsp;<img src="https://img.shields.io/badge/SWAGGER-5B8C04?style=for-the-badge&logo=Swagger&logoColor=white"/>&nbsp;<img src="https://img.shields.io/badge/Postman-FF6C37?style=for-the-badge&logo=Postman&logoColor=white"/>
+> - ETC :  <img src="https://img.shields.io/badge/Git-F05032?style=for-the-badge&logo=Git&logoColor=white"/>&nbsp;<img src="https://img.shields.io/badge/Github-181717?style=for-the-badge&logo=Github&logoColor=white"/>&nbsp;<img src="https://img.shields.io/badge/SWAGGER-5B8C04?style=for-the-badge&logo=Swagger&logoColor=white"/>&nbsp;
 
 ## 모델링
 ---
+![image](https://user-images.githubusercontent.com/8219812/141481348-01525848-e996-4477-9b1f-e1a63ed016a2.png)
+
 
 ## API
 ---
+[링크-Swagger](http://18.188.189.173:8031/swagger/)
 
 ## 구현 기능
 ---
+1. 회원가입, 로그인, 로그아웃
+- 커스텀 유저모델 생성, username 대신 email을 사용
+- rest_auth 사용, 로그인 시 토큰 생성
+2. 입급, 출금 API
+- 계좌의 소유주만 계좌에서 입금, 출금 
+- 잔액을 넘어서 출금 요청을 하면 에러 메세지 반환
+3. 거래 내역 조회 API
+- 계좌의 소유주만 거래 내역 조회 가능
+- 입금, 출금만 선택해서 필터링
+- 거래일시별로 조회기간을 정해서 필터링 
+- Pagination
+
+## 거래내역이 1억건을 넘어갈 때에 대한 고려
+### sqlite 설정
+```python
+from django.db.backends.signals import connection_created
 
 
+def activate_db_optimize(sender, connection, **kwargs):
+    """Enable integrity constraint with sqlite."""
+    if connection.vendor == 'sqlite':
+        cursor = connection.cursor()
+        cursor.execute('PRAGMA synchronous = OFF;')
+        cursor.execute('PRAGMA journal_mode = MEMORY;')
+        cursor.execute('PRAGMA cache_size = 10000;')
+        cursor.execute('PRAGMA temp_store = MEMORY;')
+        
+
+connection_created.connect(activate_db_optimize)
+```
 
 ## 배포정보
 ---
@@ -164,30 +195,16 @@
 3. 백엔드 서버용 .dockerenv.deploy.backend 파일을 만들어서 안에 다음과 같은 내용을 입력한다. manage.py와 같은 폴더에 생성한다.
     ### .dockerenv.deploy.backend
     ```text
-      SQL_DATABASE_NAME=db이름
-      SQL_USER=db_user이름
-      SQL_PASSWORD=db_비밀번호
       DJANGO_SECRET_KEY='django시크릿키'
     ```
-   
-4. DB 용 .dockerenv.deploy.db 파일을 만들어서 안에 다음과 같은 내용을 입력한다. manage.py와 같은 폴더에 생성한다.
-  
-    ### .dockerenv.deploy.backend
-    ```text
-      DJANGO_SECRET_KEY='django시크릿키'
-    ```
-
-    ### .dockerenv.deploy.db
-    ```text
-    ```
-    
-5. docker-compose를 통해서 db와 서버를 실행시킨다.
+       
+4. docker-compose를 통해서 db와 서버를 실행시킨다.
     
     ```bash
     docker-compose -f docker-compose-deploy.yml up
     ```
     
-6. 만약 백그라운드에서 실행하고 싶을 시 `-d` 옵션을 추가한다.
+5. 만약 백그라운드에서 실행하고 싶을 시 `-d` 옵션을 추가한다.
   
     ```bash
     docker-compose -f docker-compose-deploy.yml up -d
@@ -196,7 +213,53 @@
 ## 폴더 구조
 
 ```bash
-
+📦Assignment4
+ ┣ 📂accounts
+ ┃ ┣ 📂migrations
+ ┃ ┣ 📂tests
+ ┃ ┃ ┣ 📜__init__.py
+ ┃ ┃ ┣ 📜tests_account.py
+ ┃ ┃ ┣ 📜tests_deposit.py
+ ┃ ┃ ┣ 📜tests_tradelog.py
+ ┃ ┃ ┗ 📜tests_withdrawal.py
+ ┃ ┣ 📜__init__.py
+ ┃ ┣ 📜admin.py
+ ┃ ┣ 📜apps.py
+ ┃ ┣ 📜exceptions.py
+ ┃ ┣ 📜filters.py
+ ┃ ┣ 📜managers.py
+ ┃ ┣ 📜models.py
+ ┃ ┣ 📜permissions.py
+ ┃ ┣ 📜serializers.py
+ ┃ ┣ 📜urls.py
+ ┃ ┗ 📜views.py
+ ┣ 📂eight_percent
+ ┃ ┣ 📂settings
+ ┃ ┃ ┣ 📜__init__.py
+ ┃ ┃ ┣ 📜base.py
+ ┃ ┃ ┣ 📜deploy.py
+ ┃ ┃ ┣ 📜dev_local.py
+ ┃ ┃ ┗ 📜dev_local_dblog.py
+ ┃ ┣ 📜__init__.py
+ ┃ ┣ 📜asgi.py
+ ┃ ┣ 📜urls.py
+ ┃ ┗ 📜wsgi.py
+ ┣ 📂users
+ ┃ ┣ 📂migrations
+ ┃ ┣ 📜__init__.py
+ ┃ ┣ 📜admin.py
+ ┃ ┣ 📜apps.py
+ ┃ ┣ 📜models.py
+ ┃ ┣ 📜permissions.py
+ ┃ ┣ 📜serializers.py
+ ┃ ┣ 📜tests.py
+ ┃ ┣ 📜urls.py
+ ┃ ┗ 📜views.py
+ ┣ 📜docker-compose-depoly.yml
+ ┣ 📜README.md
+ ┣ 📜manage.py
+ ┣ 📜pull_request_template.md
+ ┗ 📜requirements.txt
 ```
 
 ## TIL정리 (Blog)
