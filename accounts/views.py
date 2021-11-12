@@ -111,7 +111,8 @@ class AccountViewSet(viewsets.GenericViewSet):
         계좌 리스트 조회
         GET /accounts/{account_id}/tradelogs/
         """
-        tradelogs = TradeLog.objects.filter(account_id=pk)
+        account = self.get_object()
+        tradelogs = TradeLog.objects.filter(account_id=account.id)
 
         filter_set = {
             'data': request.query_params,
