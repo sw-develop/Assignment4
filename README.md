@@ -1,21 +1,17 @@
-# Assignment4
+# 원티드x위코드 백엔드 프리온보딩 프로젝트 #4
 
-원티드x위코드 백엔드 프리온보딩 과제4
-- 과제 출제 기업 정보
-  - 기업명 : 8퍼센트
-  -  [8퍼센트 사이트](https://8percent.kr/)
-  - [원티드 채용 링크](https://www.wanted.co.kr/wd/64695)
+해당 프로젝트는 원티드X위코드 프리온보딩 백엔드 코스에서 수행한 **8퍼센트**의 기업 과제 입니다.
 
-## Members
+## ✔️Members
 |이름   |github                   |담당 기능|
 |-------|-------------------------|--------------------|
-|김태우 |[jotasic](https://github.com/jotasic)       | API(거래내역)                           |
-|고유영 |[lunayyko](https://github.com/lunayyko)     | API(회원가입, 로그인, 로그아웃), 배포환경설정  |
-|박지원 |[jiwon5304](https://github.com/jiwon5304)   | API(회원가입, 로그인, 로그아웃)             |
-|최신혁 |[shchoi94](https://github.com/shchoi94)     | API(계좌생성, 계좌목록조회, 입금, 출금), swagger 세팅|
-|박세원 |[sw-develop](https://github.com/sw-develop) | API(거래내역), Functional Test         |
+|박세원 |[sw-develop](https://github.com/sw-develop) | 거래 내역 조회 API 구현, 거래 내역 조회 시 입금/출금 & 거래일시에 대한 필터링 및 Cursor Pagination 적용, 입금/출금/거래내역조회에 대한 Functional Test 코드 작성         |
 
-## 과제 내용
+## ✔️구현 조건 내용
+
+<details>
+<summary><b>구현 조건 자세히 보기</b></summary>
+<div markdown="1">
 
 ### [필수 포함 사항]
 
@@ -82,115 +78,34 @@
 - Functional Test 의 구현 (입금, 조회, 출금에 대한 시나리오 테스트)
 - 거래내역이 1억건을 넘어갈 때에 대한 고려
     - 이를 고려하여 어떤 설계를 추가하셨는지를 README에 남겨 주세요.
+	
+	
+</div>
+</details>	
 
-## 사용 기술 및 tools
+
+## ✔️사용 기술 및 tools
 > - Back-End :  <img src="https://img.shields.io/badge/Python 3.8-3776AB?style=for-the-badge&logo=Python&logoColor=white"/>&nbsp;<img src="https://img.shields.io/badge/Django 3.2-092E20?style=for-the-badge&logo=Django&logoColor=white"/>&nbsp;<img src="https://img.shields.io/badge/sqlite-0064a5?style=for-the-badge&logo=sqlite&logoColor=white"/>&nbsp;
 > - Deploy : <img src="https://img.shields.io/badge/AWS_EC2-232F3E?style=for-the-badge&logo=Amazon&logoColor=white"/>&nbsp;<img src="https://img.shields.io/badge/Docker-0052CC?style=for-the-badge&logo=Docker&logoColor=white"/>
 > - ETC :  <img src="https://img.shields.io/badge/Git-F05032?style=for-the-badge&logo=Git&logoColor=white"/>&nbsp;<img src="https://img.shields.io/badge/Github-181717?style=for-the-badge&logo=Github&logoColor=white"/>&nbsp;<img src="https://img.shields.io/badge/SWAGGER-5B8C04?style=for-the-badge&logo=Swagger&logoColor=white"/>&nbsp;
 
-## 모델링
+## ✔️모델링
 ![image](https://user-images.githubusercontent.com/8219812/141481348-01525848-e996-4477-9b1f-e1a63ed016a2.png)
 
 - 계좌잔액, 거래내역의 금액 관련 필드들 일반 IntegerField 대신, PositiveBigIntegerField를 사용하였습니다.
 - IntegerField는 약 21억까지 저장되기 때문에, 계좌 잔액을 나타내기가 부족하다고 판단했습니다. BigIntegerField로 할 시, 약 900경까지 표현할 수 있습니다.
 
-## API
+## ✔️API
 [링크-Swagger](http://18.188.189.173:8031/swagger/)
 
-## 구현 기능
-**1. 회원가입, 로그인, 로그아웃**
- - 커스텀 유저모델 생성, username 대신 email을 사용
- - rest_auth 사용, 로그인 시 토큰 생성
+## ✔️구현 기능
 
-**2. 입급, 출금 API**
- - 계좌의 소유주만 계좌에서 입금, 출금 
- - 잔액을 넘어서 출금 요청을 하면 에러 메세지 반환
-
-**3. 계좌 생성 및 계좌List API**
-- 로그인한 유저만 접근 및 생성 가능
-- 자신의 계좌만 List로 보여준다.
-
-**4. 거래 내역 조회 API**
+**거래 내역 조회 API**
   - 계좌의 소유주만 거래 내역 조회 가능
   - 입금, 출금만 선택해서 필터링
-  - 거래일시별로 조회기간을 정해서 필터링, Pagination
-  
+  - 거래일시별로 조회기간을 정해서 필터링 및 Cursor Pagination 적용
 
-## 거래내역이 1억건을 넘어갈 때에 대한 고려
-### 개요
-약 500만개의 거래내역을 기반으로 성능 테스트를 하였습니다
-
-### DB Index 적용
-
-거래정보 테이블에서 색인에 자주 사용하는 account와 created_at의 index를 지정하였습니다.
-```python
-class TradeLog(models.Model): 
-
-    account     = models.ForeignKey(.....db_index=True)
-		...
-    created_at  = models.DateTimeField(....db_index=True)
-```
-
-### 캐시 사이즈 늘리기
-sqlite 캐시 사이즈를 늘려봤습니다.
-    
-    ```bash
-    def activate_db_optimize(sender, connection, **kwargs):
-        """Enable integrity constraint with sqlite."""
-        if connection.vendor == 'sqlite':
-            cursor = connection.cursor()
-            cursor.execute('PRAGMA cache_size = 100000;')
-    
-    connection_created.connect(activate_db_optimize)
-    ```
-    
- 장고 쉘에서는 약 500만건의 data의 count를 측정할 때, 성능 차이가 있었습니다. 약 10배)
-    
-    ```bash
-    # 캐시 적용 안함
-    In [3]: TradeLog.objects.count()
-    Time: 0.07888481 s
-    SQL: SELECT COUNT(*) AS "__count" FROM "trade_logs"
-    Args: ()
-    Out[3]: 5849542
-    
-    # 캐시 적용
-    In [7]: TradeLog.objects.count()
-    Time: 0.00876825 s
-    SQL: SELECT COUNT(*) AS "__count" FROM "trade_logs"
-    Args: ()
-    Out[7]: 5849542
-    ```
-    
-  하지만 실제 api 호출에서는 성능은 하락하였습니다.
-  
-  **캐시 적용 안함 - 571ms**
-  ![캐시적용 안함](https://user-images.githubusercontent.com/8219812/141517870-d5049776-dae4-441c-9f1f-a65ee5ecf175.png)
-
-  **캐시 적용 - 651ms**
-  ![캐시적용](https://user-images.githubusercontent.com/8219812/141517882-7016cb09-0638-4705-a667-e51124b2e071.png)
-
-    
-### Cursor Pagnation 적용
-  - Cursor Pagnation은 다음 페이지네이션의 PK를 기반으로 페이지를 구하는 방식을 말합니다.
-      - 인덱스가 적용된 값을 비교하기 때문에 테이블 풀스캔을 하지 않습니다.
-      - id 값으로 데이터를 조회하기 때문에, 데이터 쓰기가 빈번한 테이블이여도 다음 페이지네이션 조회 시 값이 누락되지 않습니다.
-  - 반면 limit&offset pagination은 offset 위치를 계산하고, 필요한 데이터를 찾을 때까지 테이블을 전체 스캔하므로 offset이 커질 수록 DB 부하 리스크는 더 커집니다.
-
-
-하지만 실제 api 호출에서는 limit&offset 보다 성능이 하락하였습니다.
-
-**Cursor Pagnatio - 571msn**
-  ![캐시적용 안함](https://user-images.githubusercontent.com/8219812/141517870-d5049776-dae4-441c-9f1f-a65ee5ecf175.png)
-
-**limit&offset pagination - 171ms**
-  ![스크린샷 2021-11-13 오전 3 24 04](https://user-images.githubusercontent.com/8219812/141518278-2606467f-0ec5-461c-b8b2-894c012530a5.png)
-
-### 정리
-- 결론적으로는 거래내역이 1억건을 넘어갈 때에 어떻게 하면 효율 적으로 할 수 있는지 대안을 제시 못하였습니다.
-- 이론과 다르게 테스트 한 방식이 잘못되어 잘못된 결과가 나왔는지 아니면 어떠한 이유가 있어서 이러한 결과가 나왔는지 추후에 자료들을 더 찾아봐야 될 것 같습니다
-
-## Functional Test 의 구현 시나리오
+## ✔️Functional Test 의 구현 시나리오
 - Functional Test는 E2E(End-to-End) 혹은 브라우저 테스트로 소프트웨어 내부 구조나 구현 방법을 고려하기보다 테스트 시나리오를 바탕으로 실제 사용자가 접하는 브라우저 테스트를 하는 것입니다.
 - 하지만 현재 프로젝트는 프론트 부분을 구현하지 않았으므로 해당 방향으로 테스트를 진행하기는 어렵다고 판단하였습니다.
 - 대신 사용자의 입장에서 구현한 기능(회원가입/로그인/계좌 및 거래 관련)들의 일련의 시나리오를 각각 구성하여 테스트를 진행하였으며, 핵심 기능인 입금, 출금, 거래 내역 조회 시나리오는 다음과 같습니다.
@@ -208,15 +123,14 @@ sqlite 캐시 사이즈를 늘려봤습니다.
 
 
 
-## 배포정보
----
+## ✔️배포정보
 |구분   |  정보          |비고|
 |-------|----------------|----|
 |배포플랫폼 | AWS EC2    |    |
 |API 주소 | http://18.188.189.173:8031/            |    |
 
 
-## API TEST 방법
+## ✔️API TEST 방법
 1. 우측 링크를 클릭해서 swagger로 들어갑니다. [링크](http://18.188.189.173:8031/swagger/)
 
 2. 회원가입을 진행합니다. (email, name, password 필드만 입력)
@@ -232,7 +146,14 @@ sqlite 캐시 사이즈를 늘려봤습니다.
 ![image](https://user-images.githubusercontent.com/8219812/141520314-76c28e9c-8e96-4d1c-b08f-1960eda2b8c0.png)
 
 
-## 설치 및 실행 방법
+## ✔️설치 및 실행 방법
+
+
+<details>
+<summary><b>Local 개발 및 테스트용</b></summary>
+<div markdown="1">
+	
+
 ###  Local 개발 및 테스트용
 
 1. 해당프로젝트를 clone 하고, 프로젝트 폴더로 들어간다.
@@ -262,6 +183,15 @@ sqlite 캐시 사이즈를 늘려봤습니다.
     ```bash
     python manage.py runserver 0.0.0.0:8000
     ```
+	
+	
+</div>
+</details>
+
+
+<details>
+<summary><b>배포용</b></summary>
+<div markdown="1">
 
 ###  배포용 
 1. 해당프로젝트를 clone 하고, 프로젝트 폴더로 들어간다.
@@ -291,7 +221,11 @@ sqlite 캐시 사이즈를 늘려봤습니다.
     docker-compose -f docker-compose-deploy.yml up -d
     ```
 
-## 폴더 구조
+</div>
+</details>
+
+	
+## ✔️폴더 구조
 
 ```bash
 📦Assignment4
@@ -346,13 +280,6 @@ sqlite 캐시 사이즈를 늘려봤습니다.
  ┣ 📜requirements.txt
  ┗ 📜test_functional_test.py
 ```
-
-## TIL정리 (Blog)
-- 김태우 : http://velog.io/@burnkim61/프리온보딩-과제-4
-- 고유영 :
-- 박지원 : https://yesjiwon5304.tistory.com/35
-- 최신혁 :
-- 박세원 :
 
 # Reference
 이 프로젝트는 원티드x위코드 백엔드 프리온보딩 과제 일환으로 8퍼센트에서 출제한 과제를 기반으로 만들었습니다.
